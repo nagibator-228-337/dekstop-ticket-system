@@ -9,10 +9,9 @@ public class Message
 	public string Text { get; set; }
 	public MessageType Type { get; set; }
 
-	public enum MessageType
-	{
-		ForEmpoloyee,
-		ForClient
-	}
-
+    public enum MessageType
+    {
+        ForEmpoloyee,
+        ForClient
+    }
 }
