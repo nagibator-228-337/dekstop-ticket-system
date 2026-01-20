@@ -1,0 +1,59 @@
+﻿<Window x:Class="DTS.CreateTicketWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DTS"
+        mc:Ignorable="d"
+        Title="Create a Ticket" Height="350" Width="650">
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Main part -->
+        <TextBox Name="SubjectTextBox"
+                 Grid.Row= "0"
+                 VerticalAlignment="Center"
+                 />
+        
+        <TextBox Name="ThemeTextBox"
+                 Grid.Row="2"
+                 VerticalScrollBarVisibility="Auto"
+                 />
+
+        <TextBox x:Name="EmailTextBox"
+                   Grid.Row="1"
+                 VerticalAlignment="Center"
+                   />
+
+        <Button Grid.Row="3"
+                Content="Create Ticket"
+                HorizontalAlignment="Right"
+                />
+
+        <!-- Placeholder -->
+        <TextBlock Name="SubjectPlaceHolder"
+                   Grid.Row="0" 
+                   Text=" Subject"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource PlaceholderStyle}"
+                   />
+        
+        <TextBlock Name="ThemeTextPlaceholder"
+                   Grid.Row="2" 
+                   Text=" Write about your problem or solution"
+                   Style="{StaticResource PlaceholderStyle}"
+                   />
+
+        <TextBlock Name="EmailPlaceholder"
+                   Grid.Row="1"
+                   Text=" Your contact email"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource PlaceholderStyle}"
+                   />
+    </Grid>
+</Window>

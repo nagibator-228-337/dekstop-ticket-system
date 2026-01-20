@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="PlaceholderStyle" TargetType="TextBlock">
+        <Setter Property="Opacity" Value="0.5"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+    </Style>
+</ResourceDictionary>

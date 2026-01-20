@@ -5,20 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DTS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-	<Grid ShowGridLines="True">
-		<Grid.RowDefinitions>
-			<RowDefinition></RowDefinition>
-			<RowDefinition></RowDefinition>
-			<RowDefinition></RowDefinition>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition></ColumnDefinition>
-			<ColumnDefinition></ColumnDefinition>
-			<ColumnDefinition></ColumnDefinition>
-		</Grid.ColumnDefinitions>
-		<StackPanel Row="1" Column = "1">
-			<Sta
-		</StackPanel>
-	</Grid>
+        Title="Ticket System" Height="600" Width="850">
+	<Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Main buttons -->
+                <Button Grid.Row="0"
+                    Name="Create"
+                    Content="Create Ticket"
+                    Margin="10"/>
+                <Button Grid.Row="1"
+                    Name="Search"
+                    Content="Search Ticket" 
+                    Margin="10"/>
+            </Grid>
+
+            <!-- Login part-->
+            <Grid Grid.Column="2">
+                <Button Name="Login" 
+                    Content="Login" 
+                    Click="LoginButton_click"
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Top"
+                    Margin="10"
+                    />
+            </Grid>
+        </Grid>
+        <Grid>
+            <Frame x:Name="MainFrame"/>
+        </Grid>
+    </Grid>
+    
 </Window>
