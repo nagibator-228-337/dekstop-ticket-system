@@ -28,7 +28,8 @@ namespace DTS
 
         private void LoginButton_click( object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new MainEmployeePage());
+            var window = new LoginWindow();
+            window.ShowDialog();
         }
 
         private void CreateButton_click(object sender, RoutedEventArgs e)
@@ -40,7 +41,7 @@ namespace DTS
             }
             else
             {
-                createTicketWindow.Activate();
+                createTicketWindow.Activate(); //Prevents opening windows hundreds of times
             }
         }
 

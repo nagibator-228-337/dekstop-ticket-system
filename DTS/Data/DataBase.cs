@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace DTS.Data
@@ -17,6 +18,16 @@ namespace DTS.Data
             string folder = AppDomain.CurrentDomain.BaseDirectory;
             _dbPath = Path.Combine(folder, "DTS.db");
             InitDataBase();
+            AddAdmin();
+        }
+
+        private string ComputeHash(string password) //For storing and handling the password hash instead of the plain password
+        {
+            using SHA256 sha = SHA256.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes(password);
+            byte[] hash = sha.ComputeHash(bytes);
+
+            return Convert.ToHexString(hash);
         }
 
 
@@ -86,7 +97,56 @@ namespace DTS.Data
                 command.ExecuteNonQuery();
             }
         }
-        
+
+        public void AddAdmin()
+        {
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT OR IGNORE INTO Employees (Login, PasswordHash, FullName)
+                VALUES (@login, @passwordHash, @FullName)";
+
+            command.Parameters.AddWithValue("@login", "admin");
+            command.Parameters.AddWithValue("@passwordHash", ComputeHash("123")); 
+            command.Parameters.AddWithValue("@FullName", "Admin");
+
+            command.ExecuteNonQuery();
+        }
+
+        public bool ValidateLogin(string login, string password, out string fullName)
+        {
+            fullName = string.Empty;
+
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT PasswordHash, FullName
+                FROM Employees
+                WHERE Login = @login
+                LIMIT 1";
+            command.Parameters.AddWithValue("@login", login);
+
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                string hashFromDb = reader.GetString(0);
+                string enteredHash = ComputeHash(password);
+
+                if (hashFromDb == enteredHash)
+                {
+                    fullName = reader.GetString(1);
+                    return true;
+                }
+            }
+
+            return false; //login not found or wrong pass
+        }
+
+
         public ObservableCollection<Ticket> GetAllTickets()
         {
             var tickets = new ObservableCollection<Ticket>();

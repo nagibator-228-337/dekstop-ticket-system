@@ -50,7 +50,10 @@
             </Grid>
         </Grid>
         <Grid>
-            <Frame x:Name="MainFrame" Navigated="MainFrame_Navigated"/>
+            <Frame x:Name="MainFrame" 
+                   Navigated="MainFrame_Navigated"
+                   NavigationUIVisibility="Hidden"
+                   />
         </Grid>
     </Grid>
     

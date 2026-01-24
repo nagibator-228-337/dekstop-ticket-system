@@ -5,8 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DTS"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="LoginWindow" Height="199" Width="311">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Button Name="LoginButton"
+                Content="Login"
+                Grid.Row="1"
+                Click="LoginButton_click"/>
+
+        <Grid Grid.Row="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Login"
+                       VerticalAlignment="Center"/>
+            <TextBlock Text="Password"
+                       Grid.Row="2"
+                       VerticalAlignment="Center"/>
+
+            
+            <TextBox Name="LoginTextBox"
+                     Grid.Row="1"/>
+            
+            <PasswordBox Name="PasswordTextBox"
+                         Grid.Row="3"/>
+        </Grid>
     </Grid>
 </Window>
+
+    
