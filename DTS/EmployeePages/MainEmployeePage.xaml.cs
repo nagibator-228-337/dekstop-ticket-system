@@ -1,5 +1,7 @@
-﻿using System;
+﻿using DTS.Data;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,14 +15,18 @@ using System.Windows.Shapes;
 
 namespace DTS
 {
-    /// <summary>
-    /// Логика взаимодействия для MainEmployeePage.xaml
-    /// </summary>
     public partial class MainEmployeePage : Page
     {
+        private ObservableCollection<Ticket> _tickets;
+
         public MainEmployeePage()
         {
             InitializeComponent();
+
+            DataBase db = new DataBase();
+            _tickets = db.GetAllTickets();
+
+            TicketsGrid.ItemsSource = _tickets;
         }
     }
 }

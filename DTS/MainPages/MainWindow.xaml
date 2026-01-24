@@ -28,10 +28,13 @@
                 <Button Grid.Row="0"
                     Name="Create"
                     Content="Create Ticket"
+                    Click="CreateButton_click"
                     Margin="10"/>
+                
                 <Button Grid.Row="1"
                     Name="Search"
                     Content="Search Ticket" 
+                    Click="SearchButton_click"
                     Margin="10"/>
             </Grid>
 
@@ -47,7 +50,7 @@
             </Grid>
         </Grid>
         <Grid>
-            <Frame x:Name="MainFrame"/>
+            <Frame x:Name="MainFrame" Navigated="MainFrame_Navigated"/>
         </Grid>
     </Grid>
     

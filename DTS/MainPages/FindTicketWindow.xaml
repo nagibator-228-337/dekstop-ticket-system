@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DTS"
         mc:Ignorable="d"
         Title="FInd a ticket" Height="auto" Width="650">
-    <Grid>
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -21,7 +21,7 @@
                    HorizontalAlignment="Center"
                    />
 
-        <TextBox Name="CodeTextBlock"
+        <TextBox Name="CodeTextBox"
                  Grid.Row="1"
                 />
 
@@ -31,7 +31,7 @@
                 Content="Find a ticket"
                 />
 
-        <TextBlock Name="CodeTextBox"
+        <TextBlock Name="CodePlaceholder"
                    Text=" Code here"
                    Grid.Row="1"
                    Style="{StaticResource PlaceholderStyle}"/>

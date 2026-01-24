@@ -19,19 +19,21 @@
                  Grid.Row= "0"
                  VerticalAlignment="Center"
                  />
-        
-        <TextBox Name="ThemeTextBox"
+
+        <TextBox Name="DescriptionTextBox"
                  Grid.Row="2"
                  VerticalScrollBarVisibility="Auto"
                  />
 
-        <TextBox x:Name="EmailTextBox"
-                   Grid.Row="1"
+        <TextBox Name="ContactTextBox"
+                 Grid.Row="1"
                  VerticalAlignment="Center"
                    />
 
         <Button Grid.Row="3"
+                Name="CreateButton"
                 Content="Create Ticket"
+                Click="CreateButton_click"
                 HorizontalAlignment="Right"
                 />
 
@@ -42,14 +44,14 @@
                    VerticalAlignment="Center"
                    Style="{StaticResource PlaceholderStyle}"
                    />
-        
-        <TextBlock Name="ThemeTextPlaceholder"
+
+        <TextBlock Name="DescriptionTextPlaceholder"
                    Grid.Row="2" 
                    Text=" Write about your problem or solution"
                    Style="{StaticResource PlaceholderStyle}"
                    />
 
-        <TextBlock Name="EmailPlaceholder"
+        <TextBlock Name="ContactPlaceholder"
                    Grid.Row="1"
                    Text=" Your contact email"
                    VerticalAlignment="Center"

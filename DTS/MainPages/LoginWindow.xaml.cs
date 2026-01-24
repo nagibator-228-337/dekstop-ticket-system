@@ -13,11 +13,11 @@ using System.Windows.Shapes;
 namespace DTS
 {
     /// <summary>
-    /// Логика взаимодействия для FindTicketWindow.xaml
+    /// Логика взаимодействия для Window1.xaml
     /// </summary>
-    public partial class FindTicketWindow : Window
+    public partial class LoginWindow : Window
     {
-        public FindTicketWindow()
+        public LoginWindow()
         {
             InitializeComponent();
         }

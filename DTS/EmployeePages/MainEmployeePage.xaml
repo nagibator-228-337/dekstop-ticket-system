@@ -15,6 +15,15 @@
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="2">
+            <DataGrid Name="TicketsGrid" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                    <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="2*"/>
+                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                    <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
 
         </Grid>
     </Grid>
