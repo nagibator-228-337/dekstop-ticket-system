@@ -6,56 +6,126 @@
         xmlns:local="clr-namespace:DTS"
         mc:Ignorable="d"
         Title="Create a Ticket" Height="350" Width="650">
-    <Grid Background="White">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="5*"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        
-        <!-- Main part -->
-        <TextBox Name="SubjectTextBox"
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Main part -->
+            <TextBox Name="SubjectTextBox"
                  Grid.Row= "0"
                  VerticalAlignment="Center"
                  />
 
-        <TextBox Name="DescriptionTextBox"
-                 Grid.Row="2"
-                 VerticalScrollBarVisibility="Auto"
-                 />
 
-        <TextBox Name="ContactTextBox"
+            <TextBox Name="ContactTextBox"
                  Grid.Row="1"
                  VerticalAlignment="Center"
                    />
 
-        <Button Grid.Row="3"
+            <TextBox Name="DescriptionTextBox"
+                 Grid.Row="2"
+                 VerticalScrollBarVisibility="Auto"
+                 />
+
+
+            <Button Grid.Row="3"
                 Name="CreateButton"
                 Content="Create Ticket"
                 Click="CreateButton_click"
                 HorizontalAlignment="Right"
                 />
 
-        <!-- Placeholder -->
-        <TextBlock Name="SubjectPlaceHolder"
+            <!-- Placeholder -->
+            <TextBlock Name="SubjectPlaceHolder"
                    Grid.Row="0" 
-                   Text=" Subject"
+                   Text=" Subject*"
                    VerticalAlignment="Center"
                    Style="{StaticResource PlaceholderStyle}"
                    />
 
-        <TextBlock Name="DescriptionTextPlaceholder"
+            <TextBlock Name="DescriptionTextPlaceholder"
                    Grid.Row="2" 
-                   Text=" Write about your problem or solution"
+                   Text=" Write about your problem or solution*"
                    Style="{StaticResource PlaceholderStyle}"
                    />
 
-        <TextBlock Name="ContactPlaceholder"
+            <TextBlock Name="ContactPlaceholder"
                    Grid.Row="1"
                    Text=" Your contact email"
                    VerticalAlignment="Center"
                    Style="{StaticResource PlaceholderStyle}"
                    />
+
+            <!-- Unfilled fields errors -->
+            <TextBlock Name="SubjectUnfilledBlock"
+                   Grid.Row="0"
+                   Text="Please fill in this field"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Foreground="Red"
+                   Style="{StaticResource PlaceholderStyle}"
+                   Visibility="Collapsed"/>
+
+            <TextBlock Name="DescriptionUnfilledBlock"
+           Grid.Row="2"
+           Text="Please fill in this field"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+           Foreground="Red"
+           Style="{StaticResource PlaceholderStyle}"
+                   Visibility="Collapsed"/>
+        </Grid>
+        <Grid Visibility="Collapsed" Name="CodeGrid">
+            <Rectangle Fill="#80000000" />
+            <Border Background="White" BorderBrush="DimGray" BorderThickness="1" Width="400" Height="150">
+                <Grid Margin="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Your ticket code"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+
+                    <Grid Grid.Row="1" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                            <TextBlock Text="What the code?" VerticalAlignment="Center" Margin="0,0,5,0"/>
+
+                            <!-- Info button -->
+                            <Button Width="20" Height="20" Content="i" FontWeight="Bold" 
+                                    ToolTip="This is your ticket code. You will need it later to find your ticket. Keep it safe, as without it you cannot access your ticket."
+                                    VerticalAlignment="Center"
+                                    Background="LightBlue"
+                                    Foreground="White"
+                                    Padding="0"
+                                    BorderThickness="0"
+                                    FontSize="12"
+                                    Cursor="Hand"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBox Name="CodeTextBlock"
+                                 Width="260"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 TextAlignment="Center"/>
+
+                        <Button Content="Copy"
+                                Margin="5"
+                                Click="CopyCode_Click"/>        
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

@@ -12,9 +12,6 @@ using System.Windows.Shapes;
 
 namespace DTS
 {
-    /// <summary>
-    /// Логика взаимодействия для FindTicketWindow.xaml
-    /// </summary>
     public partial class FindTicketWindow : Window
     {
         public FindTicketWindow()

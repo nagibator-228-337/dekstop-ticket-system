@@ -12,9 +12,6 @@ using System.Windows.Shapes;
 
 namespace DTS
 {
-    /// <summary>
-    /// Логика взаимодействия для Window1.xaml
-    /// </summary>
     public partial class LoginWindow : Window
     {   
 
@@ -25,17 +22,22 @@ namespace DTS
         private void LoginButton_click (object sender, RoutedEventArgs e)
         {
             var db = new DTS.Data.DataBase();
-            if (db.ValidateLogin(LoginTextBox.Text.Trim(), PasswordTextBox.Password, out string fullName))
+
+            if (db.ValidateLogin(LoginTextBox.Text.Trim(), PasswordTextBox.Password, out string fullName, out string role))
             {
+                bool isAdmin = role == "Admin";
+                var page = new MainEmployeePage(fullName, isAdmin);
+
                 if (Application.Current.MainWindow is MainWindow main)
                 {
-                    main.MainFrame.Navigate(new MainEmployeePage());
+                    main.MainFrame.Navigate(page);
                 }
                 else
                 {
                     var window = new MainWindow();
-                    window.MainFrame.Navigate(new MainEmployeePage());
+                    window.MainFrame.Navigate(page);
                     window.Show();
+                    MainWindow.Instance.MainContetnGrid.IsEnabled = false;
                 }
 
                 this.Close();

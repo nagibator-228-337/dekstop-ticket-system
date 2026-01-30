@@ -56,6 +56,7 @@ namespace DTS.Data
                     Id INTEGER PRIMARY KEY,
                     Login TEXT NOT NULL UNIQUE,
                     PasswordHash TEXT NOT NULL,
+                    Role TEXT DEFAULT 'Default',
                     FullName TEXT
                 );
                 
@@ -69,7 +70,7 @@ namespace DTS.Data
                 );
                  ";
 
-                  
+
                 command.ExecuteNonQuery();
             }
         }
@@ -91,7 +92,7 @@ namespace DTS.Data
                 command.Parameters.AddWithValue("@createdAt", ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"));
                 command.Parameters.AddWithValue("@status", ticket.Status.ToString());
                 command.Parameters.AddWithValue("@assignedEmployeeId", ticket.AssignedEmployee?.Id ?? 0);
-                command.Parameters.AddWithValue("@accessCode", ticket.AccessCode ??"");
+                command.Parameters.AddWithValue("@accessCode", ticket.AccessCode ?? "");
                 command.Parameters.AddWithValue("@clientContact", ticket.ClientContact ?? "");
 
                 command.ExecuteNonQuery();
@@ -105,26 +106,28 @@ namespace DTS.Data
 
             var command = connection.CreateCommand();
             command.CommandText = @"
-                INSERT OR IGNORE INTO Employees (Login, PasswordHash, FullName)
-                VALUES (@login, @passwordHash, @FullName)";
+                INSERT OR IGNORE INTO Employees (Login, PasswordHash, FullName, Role)
+                VALUES (@login, @passwordHash, @FullName, @Role)";
 
             command.Parameters.AddWithValue("@login", "admin");
-            command.Parameters.AddWithValue("@passwordHash", ComputeHash("123")); 
+            command.Parameters.AddWithValue("@passwordHash", ComputeHash("123"));
             command.Parameters.AddWithValue("@FullName", "Admin");
+            command.Parameters.AddWithValue("@Role", "Admin");
 
             command.ExecuteNonQuery();
         }
 
-        public bool ValidateLogin(string login, string password, out string fullName)
+        public bool ValidateLogin(string login, string password, out string fullName, out string role)
         {
             fullName = string.Empty;
+            role = string.Empty;
 
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
             var command = connection.CreateCommand();
             command.CommandText = @"
-                SELECT PasswordHash, FullName
+                SELECT PasswordHash, FullName, Role
                 FROM Employees
                 WHERE Login = @login
                 LIMIT 1";
@@ -139,6 +142,7 @@ namespace DTS.Data
                 if (hashFromDb == enteredHash)
                 {
                     fullName = reader.GetString(1);
+                    role = reader.GetString(2);
                     return true;
                 }
             }

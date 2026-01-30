@@ -15,6 +15,7 @@ namespace DTS
 {
     public partial class CreateTicketWindow : Window
     {
+        private bool _unfilledField = false;
         public CreateTicketWindow()
         {
             InitializeComponent();
@@ -33,7 +34,7 @@ namespace DTS
             ContactTextBox.TextChanged += (s, e) => UpdatePlacholder(ContactTextBox, ContactPlaceholder);
         }
 
-        private void UpdatePlacholder (TextBox box, TextBlock placeholder)
+        private void UpdatePlacholder(TextBox box, TextBlock placeholder)
         {
             if (box.IsFocused || !string.IsNullOrWhiteSpace(box.Text))
             {
@@ -47,6 +48,19 @@ namespace DTS
 
         private void CreateButton_click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(SubjectTextBox.Text))
+            {
+                ErrorsHighlight(SubjectTextBox, SubjectUnfilledBlock);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(DescriptionTextBox.Text))
+            {
+                ErrorsHighlight(DescriptionTextBox, DescriptionUnfilledBlock);
+                return;
+            }
+            
+
             Ticket ticket = new Ticket
             {
                 Subject = SubjectTextBox.Text,
@@ -60,6 +74,39 @@ namespace DTS
 
             DataBase db = new DataBase();
             db.AddTicket(ticket);
+
+            CodeGrid.Visibility = Visibility.Visible;
+
+            SubjectTextBox.IsEnabled = false;
+            DescriptionTextBox.IsEnabled = false;
+            ContactTextBox.IsEnabled = false;
+            CreateButton.IsEnabled = false;
+
+            CodeTextBlock.Text = ticket.AccessCode;
         }
+
+        private async void ErrorsHighlight(TextBox textBox, TextBlock textBlock)
+        {
+            var oldBrush = textBox.BorderBrush;
+            var oldThickness = textBox.BorderThickness; //red borders
+
+            textBlock.Visibility = Visibility.Visible; //error messaage
+
+            textBox.BorderBrush = Brushes.Red;
+            textBox.BorderThickness = new Thickness(2);
+
+            await Task.Delay(3000);
+
+            textBox.BorderBrush = oldBrush;
+            textBox.BorderThickness = oldThickness;
+
+            textBlock.Visibility = Visibility.Collapsed;
+        }
+
+        private void CopyCode_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(CodeTextBlock.Text);
+        }
+
     }
 }
