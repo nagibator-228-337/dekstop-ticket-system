@@ -23,10 +23,10 @@ namespace DTS
         {
             var db = new DTS.Data.DataBase();
 
-            if (db.ValidateLogin(LoginTextBox.Text.Trim(), PasswordTextBox.Password, out string fullName, out string role))
+            if (db.ValidateLogin(LoginTextBox.Text.Trim(), PasswordTextBox.Password, out string fullName, out string role, out int id))
             {
                 bool isAdmin = role == "Admin";
-                var page = new MainEmployeePage(fullName, isAdmin);
+                var page = new MainEmployeePage(fullName, isAdmin, id);
 
                 if (Application.Current.MainWindow is MainWindow main)
                 {

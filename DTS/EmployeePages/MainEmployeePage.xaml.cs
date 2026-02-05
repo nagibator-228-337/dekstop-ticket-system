@@ -24,9 +24,10 @@ namespace DTS
         private readonly bool _isAdmin;
         private GridViewColumnHeader _lastHeaderClicked = null;
         private ListSortDirection _lastDirection = ListSortDirection.Ascending;
+        private bool _isEmployee = true;
         
 
-        public MainEmployeePage(string fullName, bool isAdmin)
+        public MainEmployeePage(string fullName, bool isAdmin, int id)
         {
             InitializeComponent();
             this.Loaded += (_, __) => { this.Focus(); Keyboard.Focus(this); };
@@ -36,14 +37,15 @@ namespace DTS
             _isAdmin = isAdmin;
             _fullName = fullName;
 
-            TicketsGrid.ItemsSource = _tickets;
+            AllTicketsGrid.ItemsSource = _tickets;
+
         }
 
-        private void TicketsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void Ticket_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (TicketsGrid.SelectedItem is Ticket ticket)
+            if (AllTicketsGrid.SelectedItem is Ticket ticket)
             {
-                var window = new TicketView(ticket);
+                var window = new TicketView(ticket, _isEmployee);
                 window.ShowDialog();
             }
         }
