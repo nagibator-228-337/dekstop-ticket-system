@@ -31,8 +31,6 @@ namespace DTS.Data
             return Convert.ToHexString(hash);
         }
 
-
-
         public void InitDataBase()
         {
 
@@ -75,6 +73,7 @@ namespace DTS.Data
                 command.ExecuteNonQuery();
             }
         }
+
         public void AddTicket(Ticket ticket)
         {
             using (var connection = new SqliteConnection($"Data Source={_dbPath}"))
@@ -92,7 +91,8 @@ namespace DTS.Data
                 command.Parameters.AddWithValue("@description", ticket.Description ?? "");
                 command.Parameters.AddWithValue("@createdAt", ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"));
                 command.Parameters.AddWithValue("@status", ticket.Status.ToString());
-                command.Parameters.AddWithValue("@assignedEmployeeId", ticket.AssignedEmployee?.Id ?? 0);
+                // correct null or id (if we have)
+                command.Parameters.AddWithValue("@assignedEmployeeId", ticket.AssignedEmployeeId.HasValue ? (object)ticket.AssignedEmployeeId.Value : DBNull.Value);
                 command.Parameters.AddWithValue("@accessCode", ticket.AccessCode ?? "");
                 command.Parameters.AddWithValue("@clientContact", ticket.ClientContact ?? "");
 
@@ -106,7 +106,7 @@ namespace DTS.Data
             connection.Open();
 
             var command = connection.CreateCommand();
-            command.CommandText = 
+            command.CommandText =
                 @"
                 INSERT OR IGNORE INTO Employees (Login, PasswordHash, FullName, Role)
                 VALUES (@login, @passwordHash, @FullName, @Role)";
@@ -129,7 +129,7 @@ namespace DTS.Data
             connection.Open();
 
             var command = connection.CreateCommand();
-            command.CommandText = 
+            command.CommandText =
                 @"
                 SELECT PasswordHash, FullName, Role, Id
                 FROM Employees
@@ -155,11 +155,12 @@ namespace DTS.Data
             return false; //wrong login or pass
         }
 
-
-
         public ObservableCollection<Ticket> GetAllTickets()
         {
             var tickets = new ObservableCollection<Ticket>();
+            // getting employee for connection id->employee 
+            var employeesById = GetAllEmployees().ToDictionary(e => e.Id);
+
             using (var connection = new SqliteConnection($"Data Source={_dbPath}"))
             {
                 connection.Open();
@@ -170,6 +171,8 @@ namespace DTS.Data
                 {
                     while (reader.Read())
                     {
+                        int? assignedId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5);
+
                         Ticket ticket = new Ticket
                         {
                             Id = reader.GetInt32(0),
@@ -177,9 +180,10 @@ namespace DTS.Data
                             Description = reader.GetString(2),
                             CreatedAt = DateTime.Parse(reader.GetString(3)),
                             Status = Enum.Parse<Ticket.TicketStatus>(reader.GetString(4)),
-                            AssignedEmployee = null,
-                            AccessCode = reader.GetString(6),
-                            ClientContact = reader.GetString(7),
+                            AssignedEmployeeId = assignedId,
+                            AssignedEmployee = (assignedId.HasValue && employeesById.TryGetValue(assignedId.Value, out var emp)) ? emp : null,
+                            AccessCode = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                            ClientContact = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
                         };
 
                         tickets.Add(ticket);
@@ -221,6 +225,10 @@ namespace DTS.Data
             return employees;
         }
 
+        public Employee? GetEmployeeById(int id)
+        {
+            return GetAllEmployees().FirstOrDefault(e => e.Id == id);
+        }
 
         public ObservableCollection<Ticket> GetTicketsByEmployee(int employeeId)
         {
@@ -230,7 +238,7 @@ namespace DTS.Data
             connection.Open();
 
             var command = connection.CreateCommand();
-            command.CommandText = 
+            command.CommandText =
                 @"
                 SELECT *
                 FROM Tickets
@@ -241,6 +249,8 @@ namespace DTS.Data
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
+                int? assignedId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5);
+
                 tickets.Add(new Ticket
                 {
                     Id = reader.GetInt32(0),
@@ -248,9 +258,10 @@ namespace DTS.Data
                     Description = reader.GetString(2),
                     CreatedAt = DateTime.Parse(reader.GetString(3)),
                     Status = Enum.Parse<Ticket.TicketStatus>(reader.GetString(4)),
-                    AssignedEmployee = null,
-                    AccessCode = reader.GetString(6),
-                    ClientContact = reader.GetString(7),
+                    AssignedEmployeeId = assignedId,
+                    AssignedEmployee = assignedId.HasValue ? GetEmployeeById(assignedId.Value) : null,
+                    AccessCode = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                    ClientContact = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
                 });
             }
 
@@ -276,6 +287,8 @@ namespace DTS.Data
             using var reader = command.ExecuteReader();
             if (reader.Read())
             {
+                int? assignedId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5);
+
                 return new Ticket
                 {
                     Id = reader.GetInt32(0),
@@ -283,9 +296,10 @@ namespace DTS.Data
                     Description = reader.GetString(2),
                     CreatedAt = DateTime.Parse(reader.GetString(3)),
                     Status = Enum.Parse<Ticket.TicketStatus>(reader.GetString(4)),
-                    AssignedEmployee = null,
-                    AccessCode = reader.GetString(6),
-                    ClientContact = reader.GetString(7),
+                    AssignedEmployeeId = assignedId,
+                    AssignedEmployee = assignedId.HasValue ? GetEmployeeById(assignedId.Value) : null,
+                    AccessCode = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                    ClientContact = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
                 };
             }
 
@@ -327,10 +341,11 @@ namespace DTS.Data
             {
                 Debug.WriteLine("UpdateAssignedEmployee: ticket.Id == 0 (no verification by Id)");
             }
+
+            // updating objects in memory
+            ticket.AssignedEmployeeId = employeeId;
+            ticket.AssignedEmployee = GetEmployeeById(employeeId);
         }
-
-
-
     }
 }
 

@@ -29,7 +29,8 @@
                         <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
                         <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                        <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployeeId}" Width="*"/>
+                        <!-- Показываем имя закреплённого сотрудника -->
+                        <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -44,7 +45,7 @@
                         <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
                         <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                        <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee}" Width="*"/>
+                        <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
                     </DataGrid.Columns>
 
                 </DataGrid>
