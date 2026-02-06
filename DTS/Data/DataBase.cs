@@ -308,6 +308,12 @@ namespace DTS.Data
 
         public void UpdateAssignedEmployee(Ticket ticket, int employeeId)
         {
+            UpdateAssignedEmployee(ticket, (int?)employeeId);
+        }
+
+        // null method allows passing null to unassign employee
+        public void UpdateAssignedEmployee(Ticket ticket, int? employeeId)
+        {
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
@@ -319,11 +325,14 @@ namespace DTS.Data
                 WHERE Id = @ticketId
                 ";
 
+            if (employeeId.HasValue)
+                command.Parameters.AddWithValue("@employeeId", employeeId.Value);
+            else
+                command.Parameters.AddWithValue("@employeeId", DBNull.Value);
 
-            command.Parameters.AddWithValue("@employeeId", employeeId);
             command.Parameters.AddWithValue("@ticketId", ticket.Id);
 
-            Debug.WriteLine($"UpdateAssignedEmployee: ticket.Id={ticket.Id}, employeeId={employeeId}");
+            Debug.WriteLine($"UpdateAssignedEmployee: ticket.Id={ticket.Id}, employeeId={(employeeId.HasValue ? employeeId.Value.ToString() : "NULL")}");
 
             int affected = command.ExecuteNonQuery();
             Debug.WriteLine($"UpdateAssignedEmployee: rowsAffected={affected}");
@@ -344,7 +353,7 @@ namespace DTS.Data
 
             // updating objects in memory
             ticket.AssignedEmployeeId = employeeId;
-            ticket.AssignedEmployee = GetEmployeeById(employeeId);
+            ticket.AssignedEmployee = employeeId.HasValue ? GetEmployeeById(employeeId.Value) : null;
         }
     }
 }

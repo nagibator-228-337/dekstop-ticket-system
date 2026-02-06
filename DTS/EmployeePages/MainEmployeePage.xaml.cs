@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,25 +20,30 @@ namespace DTS
 {
     public partial class MainEmployeePage : Page
     {
-        private ObservableCollection<Ticket> _tickets;
+        private ObservableCollection<Ticket> _allTickets;
+        private ObservableCollection<Ticket> _myTickets;
         private readonly string _fullName;
         private readonly bool _isAdmin;
+        private readonly int _employeeId; 
         private GridViewColumnHeader _lastHeaderClicked = null;
         private ListSortDirection _lastDirection = ListSortDirection.Ascending;
         private bool _isEmployee = true;
         
 
-        public MainEmployeePage(string fullName, bool isAdmin, int id)
+        public MainEmployeePage(string fullName, bool isAdmin, int id) //employee id
         {
             InitializeComponent();
             this.Loaded += (_, __) => { this.Focus(); Keyboard.Focus(this); };
 
             DataBase db = new DataBase();
-            _tickets = db.GetAllTickets();
+            _allTickets = db.GetAllTickets();
+            _myTickets = db.GetTicketsByEmployee(id);
             _isAdmin = isAdmin;
             _fullName = fullName;
+            _employeeId = id; 
 
-            AllTicketsGrid.ItemsSource = _tickets;
+            AllTicketsGrid.ItemsSource = _allTickets;
+            MyTicketsGrid.ItemsSource = _myTickets;
 
         }
 
@@ -47,6 +53,18 @@ namespace DTS
             {
                 var window = new TicketView(ticket, _isEmployee);
                 window.ShowDialog();
+
+                var db = new DataBase();
+
+                var refreshedAll = db.GetAllTickets();
+                _allTickets.Clear();
+                foreach (var t in refreshedAll)
+                    _allTickets.Add(t);
+
+                var refreshedMy = db.GetTicketsByEmployee(_employeeId);
+                _myTickets.Clear();
+                foreach (var t in refreshedMy)
+                    _myTickets.Add(t);
             }
         }
 
