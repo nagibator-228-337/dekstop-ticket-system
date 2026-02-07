@@ -5,12 +5,23 @@ public class Ticket : INotifyPropertyChanged
 {
     private int? _assignedEmployeeId;
     private Employee? _assignedEmployee;
-
+    private TicketStatus _status;
     public int Id { get; set; }
     public string Subject { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public TicketStatus Status { get; set; }
+    public TicketStatus Status
+    {
+        get => _status;
+        set
+        {
+            if (_status != value)
+            {
+                _status = value;
+                OnPropertyChanged(nameof(Status));
+            }
+        }
+    }
 
     public int? AssignedEmployeeId
     {

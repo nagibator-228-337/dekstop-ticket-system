@@ -82,6 +82,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -106,17 +107,30 @@
                         Click="PinButton_Click"/>
             </StackPanel>
 
-            <TextBox Grid.Row="1"
+            <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="0,0,0,5">
+
+                <TextBlock Text="Status: "
+                           VerticalAlignment="Center"/>
+
+                <ComboBox Name="StatusComboBox"
+                          Width="140"
+                          Margin="5,0"/>    
+            </StackPanel>
+
+            <TextBox Grid.Row="2"
                      Text="{Binding ClientContact}"
                      IsReadOnly="True"
                      Margin="0,0,0,5"/>
 
-            <TextBox Grid.Row="2"
+            <TextBox Grid.Row="3"
                      Text="{Binding Subject}"
                      IsReadOnly="True"
                      Margin="0,0,0,5"/>
 
-            <TextBox Grid.Row="3"
+            <TextBox Grid.Row="4"
                      Text="{Binding Description}"
                      IsReadOnly="True"/>
         </Grid>

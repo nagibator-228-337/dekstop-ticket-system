@@ -355,6 +355,26 @@ namespace DTS.Data
             ticket.AssignedEmployeeId = employeeId;
             ticket.AssignedEmployee = employeeId.HasValue ? GetEmployeeById(employeeId.Value) : null;
         }
+
+        public void UpdateTicketStatus(Ticket ticket, Ticket.TicketStatus status)
+        {
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                UPDATE Tickets
+                SET Status = @status
+                WHERE Id = @ticketId
+                ";
+            command.Parameters.AddWithValue("@status", status.ToString());
+            command.Parameters.AddWithValue("@ticketId", ticket.Id);
+
+            command.ExecuteNonQuery();
+
+            ticket.Status = status;
+        }
     }
 }
 

@@ -49,24 +49,27 @@ namespace DTS
 
         private void Ticket_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (AllTicketsGrid.SelectedItem is Ticket ticket)
+            if (sender is DataGrid grid && grid.SelectedItem is Ticket ticket)
             {
                 var window = new TicketView(ticket, _isEmployee);
                 window.ShowDialog();
 
                 var db = new DataBase();
 
+                // all tickets
                 var refreshedAll = db.GetAllTickets();
                 _allTickets.Clear();
                 foreach (var t in refreshedAll)
                     _allTickets.Add(t);
 
+                // my tickets
                 var refreshedMy = db.GetTicketsByEmployee(_employeeId);
                 _myTickets.Clear();
                 foreach (var t in refreshedMy)
                     _myTickets.Add(t);
             }
         }
+
 
         private void ApplyRole()
         {
