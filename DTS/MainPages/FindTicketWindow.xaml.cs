@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DTS.Data;
+using DTS.MainPages;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -12,11 +14,9 @@ using System.Windows.Shapes;
 
 namespace DTS
 {
-    /// <summary>
-    /// Логика взаимодействия для FindTicketWindow.xaml
-    /// </summary>
     public partial class FindTicketWindow : Window
     {
+
         public FindTicketWindow()
         {
             InitializeComponent();
@@ -38,5 +38,49 @@ namespace DTS
                 placeholder.Visibility = Visibility.Visible;
             }
         }
+        private void FindButton_click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(CodeTextBox.Text))
+            {
+                ErrorsHighlight(CodeTextBox, CodeErrorBlock);
+                return;
+            }
+
+            DataBase db = new DataBase();
+            var ticket = db.GetTicketByCode(CodeTextBox.Text);
+
+            if (ticket != null)
+            {
+                var window = new TicketView(ticket, false);
+                window.Show();
+
+                this.Close(); 
+            }
+            else
+            {
+                ErrorsHighlight(CodeTextBox, CodeErrorBlock);
+            }
+        }
+
+
+        private async void ErrorsHighlight(TextBox textBox, TextBlock textBlock)
+        {
+            var oldBrush = textBox.BorderBrush;
+            var oldThickness = textBox.BorderThickness;
+
+            textBlock.Visibility = Visibility.Visible;
+
+            textBox.BorderBrush = Brushes.Red;
+            textBox.BorderThickness = new Thickness(2);
+
+            await Task.Delay(3000);
+
+            textBox.BorderBrush = oldBrush;
+            textBox.BorderThickness = oldThickness;
+
+            textBlock.Visibility = Visibility.Collapsed;
+        }
+
+
     }
 }

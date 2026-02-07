@@ -12,14 +12,43 @@ using System.Windows.Shapes;
 
 namespace DTS
 {
-    /// <summary>
-    /// Логика взаимодействия для Window1.xaml
-    /// </summary>
     public partial class LoginWindow : Window
-    {
+    {   
+
         public LoginWindow()
         {
             InitializeComponent();
         }
+        private void LoginButton_click (object sender, RoutedEventArgs e)
+        {
+            var db = new DTS.Data.DataBase();
+
+            if (db.ValidateLogin(LoginTextBox.Text.Trim(), PasswordTextBox.Password, out string fullName, out string role, out int id))
+            {
+                bool isAdmin = role == "Admin";
+                var page = new MainEmployeePage(fullName, isAdmin, id);
+
+                if (Application.Current.MainWindow is MainWindow main)
+                {
+                    main.MainFrame.Navigate(page);
+                }
+                else
+                {
+                    var window = new MainWindow();
+                    window.MainFrame.Navigate(page);
+                    window.Show();
+                    MainWindow.Instance.MainContetnGrid.IsEnabled = false;
+                }
+
+                this.Close();
+            }
+
+            else
+            {
+                MessageBox.Show("Wron login or pass");
+            }
+        }
     }
+
+    
 }

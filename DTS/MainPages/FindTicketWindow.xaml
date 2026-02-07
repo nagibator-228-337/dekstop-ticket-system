@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DTS"
         mc:Ignorable="d"
-        Title="FInd a ticket" Height="auto" Width="650">
-    <Grid Margin="20">
+        Title="FInd a ticket" Height="150" Width="650">
+    <Grid Margin="20" VerticalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="3*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
@@ -29,7 +30,15 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 Content="Find a ticket"
+                Click="FindButton_click"
                 />
+        <TextBlock Name="CodeErrorBlock"
+                   Grid.Row="2"
+                   Text="Please enter a valid ticket code"
+                   Foreground="Red"
+                   Visibility="Collapsed"
+                   HorizontalAlignment="Center"/>   
+
 
         <TextBlock Name="CodePlaceholder"
                    Text=" Code here"

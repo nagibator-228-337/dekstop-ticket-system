@@ -5,26 +5,59 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DTS"
       mc:Ignorable="d" 
+      Focusable="True"
+      FocusManager.IsFocusScope="True"
+      KeyboardNavigation.TabNavigation="Cycle"
       d:DesignHeight="450" d:DesignWidth="800"
+      Background="White"
       Title="MainEmployeePage">
 
-    <Grid Background="White">
+    <Grid Margin="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="2">
-            <DataGrid Name="TicketsGrid" AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
-                    <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="2*"/>
-                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                    <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee}" Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
+        <TabControl Grid.Row="1">
+            <TabItem Header="All tickets">
+                <DataGrid Name="AllTicketsGrid" 
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True" 
+                          MouseDoubleClick="Ticket_MouseDoubleClick">
 
-        </Grid>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                        <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
+                        <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                        <!-- Показываем имя закреплённого сотрудника -->
+                        <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="My tickets">
+                <DataGrid Name="MyTicketsGrid"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          MouseDoubleClick="Ticket_MouseDoubleClick">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                        <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
+                        <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                        <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
+                    </DataGrid.Columns>
+
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+        <!-- Admin panel (for create new employees) (right now not realized) -->
+        <Button Name="AddEmployees"
+                Grid.Row="0"
+                Content="Add new employee"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Visibility="Collapsed"
+                />
     </Grid>
 </Page>

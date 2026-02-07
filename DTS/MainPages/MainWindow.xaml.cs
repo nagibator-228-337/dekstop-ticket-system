@@ -16,19 +16,20 @@ namespace DTS
     {
         public static CreateTicketWindow createTicketWindow;
         public static FindTicketWindow findTicketWindow;
+        public static MainWindow Instance { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
-            
-            //var window = new CreateTicketWindow();
-            //window.Show(); // или window.ShowDialog();
+            Instance = this;
+
 
         }
 
 
         private void LoginButton_click( object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new MainEmployeePage());
+            var window = new LoginWindow();
+            window.ShowDialog();
         }
 
         private void CreateButton_click(object sender, RoutedEventArgs e)
@@ -36,6 +37,7 @@ namespace DTS
             if (createTicketWindow == null)
             {
                 createTicketWindow = new CreateTicketWindow();
+                createTicketWindow.Closed += (s, args) => createTicketWindow = null;
                 createTicketWindow.Show();
             }
             else
@@ -49,6 +51,7 @@ namespace DTS
             if (findTicketWindow == null)
             {
                 findTicketWindow = new FindTicketWindow();
+                findTicketWindow.Closed += (s, args) => findTicketWindow = null;
                 findTicketWindow.Show();
             }
             else
@@ -57,9 +60,5 @@ namespace DTS
             }
         }
 
-        private void MainFrame_Navigated(object sender, NavigationEventArgs e)
-        {
-
-        }
     }
 }
