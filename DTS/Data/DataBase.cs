@@ -8,18 +8,28 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using DTS; 
 
 namespace DTS.Data
 {
     public class DataBase
     {
+        // Singleton instance - lazy, single per application
+        private static readonly Lazy<DataBase> _instance = new(() => new DataBase());
+        public static DataBase Instance => _instance.Value;
+
         private readonly string _dbPath;
-        public DataBase()
+
+        // Private ctor to enforce singleton
+        private DataBase()
         {
             string folder = AppDomain.CurrentDomain.BaseDirectory;
             _dbPath = Path.Combine(folder, "DTS.db");
+
+            // Initialize DB and admin/test data (keeps original side-effects)
             InitDataBase();
             AddAdmin();
+            AddTestMessage();
         }
 
         private string ComputeHash(string password) //For storing and handling the password hash instead of the plain password
@@ -31,15 +41,16 @@ namespace DTS.Data
             return Convert.ToHexString(hash);
         }
 
+        // ----------------------------- Initialization ----------------------------- //
         public void InitDataBase()
         {
+            // create database and tables if not exists
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
 
-            using (var connection = new SqliteConnection($"Data Source={_dbPath}"))
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText =
-                @"
+            using var command = connection.CreateCommand();
+            command.CommandText =
+            @"
                 CREATE TABLE IF NOT EXISTS Tickets (
                     Id INTEGER PRIMARY KEY,
                     Subject TEXT NOT NULL,
@@ -62,63 +73,103 @@ namespace DTS.Data
                 CREATE TABLE IF NOT EXISTS Messages (
                     Id INTEGER PRIMARY KEY,
                     TicketId INTEGER NOT NULL,
-                    AuthorType INTEGER NOT NULL,
+                    AuthorType TEXT NOT NULL,
                     AuthorId INTEGER NOT NULL,
                     SentAt TEXT NOT NULL,
                     Text TEXT NOT NULL
                 );
                  ";
 
-
-                command.ExecuteNonQuery();
-            }
+            command.ExecuteNonQuery();
         }
 
+        // -------------------------------- Add methods -------------------------------- //
         public void AddTicket(Ticket ticket)
         {
-            using (var connection = new SqliteConnection($"Data Source={_dbPath}"))
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText =
-                @"
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText =
+            @"
                 INSERT INTO Tickets
                    (Subject, Description, CreatedAt, Status, AssignedEmployeeId, AccessCode, ClientContact)
                    VALUES
                     (@subject, @description, @createdAt, @status, @assignedEmployeeId, @accessCode, @clientContact)
                 ";
-                command.Parameters.AddWithValue("@subject", ticket.Subject ?? "");
-                command.Parameters.AddWithValue("@description", ticket.Description ?? "");
-                command.Parameters.AddWithValue("@createdAt", ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"));
-                command.Parameters.AddWithValue("@status", ticket.Status.ToString());
-                // correct null or id (if we have)
-                command.Parameters.AddWithValue("@assignedEmployeeId", ticket.AssignedEmployeeId.HasValue ? (object)ticket.AssignedEmployeeId.Value : DBNull.Value);
-                command.Parameters.AddWithValue("@accessCode", ticket.AccessCode ?? "");
-                command.Parameters.AddWithValue("@clientContact", ticket.ClientContact ?? "");
+            command.Parameters.AddWithValue("@subject", ticket.Subject ?? "");
+            command.Parameters.AddWithValue("@description", ticket.Description ?? "");
+            command.Parameters.AddWithValue("@createdAt", ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"));
+            command.Parameters.AddWithValue("@status", ticket.Status.ToString());
+            // correct null or id (if we have)
+            command.Parameters.AddWithValue("@assignedEmployeeId", ticket.AssignedEmployeeId.HasValue ? (object)ticket.AssignedEmployeeId.Value : DBNull.Value);
+            command.Parameters.AddWithValue("@accessCode", ticket.AccessCode ?? "");
+            command.Parameters.AddWithValue("@clientContact", ticket.ClientContact ?? "");
 
-                command.ExecuteNonQuery();
-            }
+            command.ExecuteNonQuery();
         }
 
+        public void AddMessage(Message message)
+        {
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText =
+                @"INSERT INTO Messages (TicketId, AuthorType, AuthorId, SentAt, Text)
+                VALUES (@ticketId, @authorType, @authorId, @sentAt, @text)";
+
+            command.Parameters.AddWithValue("@ticketId", message.TicketId);
+            command.Parameters.AddWithValue("@authorType", message.AuthorType.ToString());
+            command.Parameters.AddWithValue("@authorId", message.AuthorId);
+            command.Parameters.AddWithValue("@sentAt", message.SentAt.ToString("yyyy-MM-dd HH:mm:ss"));
+            command.Parameters.AddWithValue("@text", message.Text);
+
+            command.ExecuteNonQuery();
+        }
+
+        // -------------------------------- Test and Admin -------------------------------- //
         public void AddAdmin()
         {
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
                 @"
                 INSERT OR IGNORE INTO Employees (Login, PasswordHash, FullName, Role)
-                VALUES (@login, @passwordHash, @FullName, @Role)";
+                VALUES (@login, @passwordHash, @fullName, @role)";
 
             command.Parameters.AddWithValue("@login", "admin");
             command.Parameters.AddWithValue("@passwordHash", ComputeHash("123"));
-            command.Parameters.AddWithValue("@FullName", "Admin");
-            command.Parameters.AddWithValue("@Role", "Admin");
+            command.Parameters.AddWithValue("@fullName", "Admin");
+            command.Parameters.AddWithValue("@role", "Admin");
 
             command.ExecuteNonQuery();
         }
 
+        public void AddTestMessage()
+        {
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                INSERT INTO Messages (TicketId, AuthorType, AuthorId, SentAt, Text)
+                VALUES (@ticketId, @authorType, @authorId, @sentAt, @text)
+                ";
+
+            command.Parameters.AddWithValue("@ticketId", 2);
+            command.Parameters.AddWithValue("@authorType", "Employee");
+            command.Parameters.AddWithValue("@authorId", 0);
+            command.Parameters.AddWithValue("@sentAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            command.Parameters.AddWithValue("@text", "some test message");
+
+            command.ExecuteNonQuery();
+        }
+
+        // -------------------------------- Login -------------------------------- //
         public bool ValidateLogin(string login, string password, out string fullName, out string role, out int id)
         {
             fullName = string.Empty;
@@ -128,7 +179,7 @@ namespace DTS.Data
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
                 @"
                 SELECT PasswordHash, FullName, Role, Id
@@ -155,40 +206,38 @@ namespace DTS.Data
             return false; //wrong login or pass
         }
 
+        // -------------------------------- "Gets" methods -------------------------------- //
         public ObservableCollection<Ticket> GetAllTickets()
         {
             var tickets = new ObservableCollection<Ticket>();
             // getting employee for connection id->employee 
             var employeesById = GetAllEmployees().ToDictionary(e => e.Id);
 
-            using (var connection = new SqliteConnection($"Data Source={_dbPath}"))
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Tickets";
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM Tickets";
+                int? assignedId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5);
 
-                using (var reader = command.ExecuteReader())
+                Ticket ticket = new Ticket
                 {
-                    while (reader.Read())
-                    {
-                        int? assignedId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5);
+                    Id = reader.GetInt32(0),
+                    Subject = reader.GetString(1),
+                    Description = reader.GetString(2),
+                    CreatedAt = DateTime.Parse(reader.GetString(3)),
+                    Status = Enum.Parse<Ticket.TicketStatus>(reader.GetString(4)),
+                    AssignedEmployeeId = assignedId,
+                    AssignedEmployee = (assignedId.HasValue && employeesById.TryGetValue(assignedId.Value, out var emp)) ? emp : null,
+                    AccessCode = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                    ClientContact = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
+                };
 
-                        Ticket ticket = new Ticket
-                        {
-                            Id = reader.GetInt32(0),
-                            Subject = reader.GetString(1),
-                            Description = reader.GetString(2),
-                            CreatedAt = DateTime.Parse(reader.GetString(3)),
-                            Status = Enum.Parse<Ticket.TicketStatus>(reader.GetString(4)),
-                            AssignedEmployeeId = assignedId,
-                            AssignedEmployee = (assignedId.HasValue && employeesById.TryGetValue(assignedId.Value, out var emp)) ? emp : null,
-                            AccessCode = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
-                            ClientContact = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
-                        };
-
-                        tickets.Add(ticket);
-                    }
-                }
+                tickets.Add(ticket);
             }
             return tickets;
         }
@@ -237,7 +286,7 @@ namespace DTS.Data
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
                 @"
                 SELECT *
@@ -273,7 +322,7 @@ namespace DTS.Data
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
                 @"
                 SELECT *
@@ -306,6 +355,40 @@ namespace DTS.Data
             return null;
         }
 
+        public ObservableCollection<Message> GetMessagesByTicketId(int ticketId)
+        {
+            var messages = new ObservableCollection<Message>();
+
+            using var connection = new SqliteConnection($"Data Source={_dbPath}");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText =
+                @"
+                SELECT *
+                FROM Messages
+                WHERE TicketId = @ticketId
+                ";
+            command.Parameters.AddWithValue("@ticketId", ticketId);
+
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                messages.Add(new Message
+                {
+                    Id = reader.GetInt32(0),
+                    TicketId = reader.GetInt32(1),
+                    AuthorType = Enum.Parse<AuthorType>(reader.GetString(2)),
+                    AuthorId = reader.GetInt32(3),
+                    SentAt = DateTime.Parse(reader.GetString(4)),
+                    Text = reader.GetString(5),
+                });
+            }
+            return messages;
+        }
+
+        // ------------------------------- Update Methods -------------------------------- //
         public void UpdateAssignedEmployee(Ticket ticket, int employeeId)
         {
             UpdateAssignedEmployee(ticket, (int?)employeeId);
@@ -317,7 +400,7 @@ namespace DTS.Data
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
                 @"
                 UPDATE Tickets
@@ -354,14 +437,14 @@ namespace DTS.Data
             // updating objects in memory
             ticket.AssignedEmployeeId = employeeId;
             ticket.AssignedEmployee = employeeId.HasValue ? GetEmployeeById(employeeId.Value) : null;
-        }
+        }   
 
         public void UpdateTicketStatus(Ticket ticket, Ticket.TicketStatus status)
         {
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
             connection.Open();
 
-            var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText =
                 @"
                 UPDATE Tickets

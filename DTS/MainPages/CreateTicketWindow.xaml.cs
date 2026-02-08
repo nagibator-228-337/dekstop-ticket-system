@@ -72,7 +72,7 @@ namespace DTS
                 ClientContact = ContactTextBox.Text
             };
 
-            DataBase db = new DataBase();
+            var db = DataBase.Instance;
             db.AddTicket(ticket);
 
             CodeGrid.Visibility = Visibility.Visible;

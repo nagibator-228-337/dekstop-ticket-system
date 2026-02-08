@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTS.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -21,7 +22,7 @@ namespace DTS
         }
         private void LoginButton_click (object sender, RoutedEventArgs e)
         {
-            var db = new DTS.Data.DataBase();
+            var db = DataBase.Instance;
 
             if (db.ValidateLogin(LoginTextBox.Text.Trim(), PasswordTextBox.Password, out string fullName, out string role, out int id))
             {

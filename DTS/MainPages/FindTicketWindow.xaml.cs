@@ -46,12 +46,12 @@ namespace DTS
                 return;
             }
 
-            DataBase db = new DataBase();
+            var db = DataBase.Instance;
             var ticket = db.GetTicketByCode(CodeTextBox.Text);
 
             if (ticket != null)
             {
-                var window = new TicketView(ticket, false);
+                var window = new TicketView(ticket, false, 0);
                 window.Show();
 
                 this.Close(); 
