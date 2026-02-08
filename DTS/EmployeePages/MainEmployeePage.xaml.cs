@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -30,17 +31,17 @@ namespace DTS
         private bool _isEmployee = true;
         
 
-        public MainEmployeePage(string fullName, bool isAdmin, int id) //employee id
+        public MainEmployeePage(string fullName, bool isAdmin, int employeeId) //employee id
         {
             InitializeComponent();
             this.Loaded += (_, __) => { this.Focus(); Keyboard.Focus(this); };
 
-            DataBase db = new DataBase();
+            var db = DataBase.Instance;
             _allTickets = db.GetAllTickets();
-            _myTickets = db.GetTicketsByEmployee(id);
+            _myTickets = db.GetTicketsByEmployee(employeeId);
             _isAdmin = isAdmin;
             _fullName = fullName;
-            _employeeId = id; 
+            _employeeId = employeeId; 
 
             AllTicketsGrid.ItemsSource = _allTickets;
             MyTicketsGrid.ItemsSource = _myTickets;
@@ -51,22 +52,24 @@ namespace DTS
         {
             if (sender is DataGrid grid && grid.SelectedItem is Ticket ticket)
             {
-                var window = new TicketView(ticket, _isEmployee);
+                var window = new TicketView(ticket, _isEmployee, _employeeId);
                 window.ShowDialog();
 
-                var db = new DataBase();
+                var db = DataBase.Instance;
 
                 // all tickets
                 var refreshedAll = db.GetAllTickets();
                 _allTickets.Clear();
                 foreach (var t in refreshedAll)
                     _allTickets.Add(t);
+                Debug.WriteLine($"Opened with this ticket Id: {ticket.Id}");
 
                 // my tickets
                 var refreshedMy = db.GetTicketsByEmployee(_employeeId);
                 _myTickets.Clear();
                 foreach (var t in refreshedMy)
                     _myTickets.Add(t);
+                Debug.WriteLine($"Opened with this ticket Id: {ticket.Id}");
             }
         }
 

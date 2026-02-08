@@ -1,29 +1,38 @@
 ﻿using DTS.Data;
-using System.Windows;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 
 namespace DTS.MainPages
 {
     public partial class TicketView : Window
     {
         private readonly Ticket _ticket;
-
-        public TicketView(Ticket ticket, bool isEmployee)
+        private readonly ObservableCollection<Message> _messages;
+        private readonly bool _isEmployee;
+        public bool IsEmployee => _isEmployee;
+        private readonly int _employeeId;
+        public TicketView(Ticket ticket, bool isEmployee, int emplooyeeId)
         {
             InitializeComponent();
             _ticket = ticket;
+            _isEmployee = isEmployee;
+            _employeeId = emplooyeeId;
 
             DataContext = _ticket;
 
-            var db = new DataBase();
+            var db = DataBase.Instance;
+
+            _messages = db.GetMessagesByTicketId(_ticket.Id);
+            MessageItemControl.ItemsSource = _messages;
+
 
             // --- Employee ComboBox ---
             var employees = db.GetAllEmployees();
             employees.Insert(0, new Employee { Id = -1, FullName = "None" });
             EmployeeComboBox.ItemsSource = employees;
             EmployeeComboBox.DisplayMemberPath = "FullName";
-
             
             if (_ticket.AssignedEmployee == null)
                 EmployeeComboBox.SelectedIndex = 0;
@@ -40,6 +49,7 @@ namespace DTS.MainPages
             StatusComboBox.ItemsSource = statuses;
             StatusComboBox.SelectedItem = _ticket.Status;
 
+
             // status changing
             StatusComboBox.SelectionChanged += (s, e) =>
             {
@@ -49,6 +59,7 @@ namespace DTS.MainPages
                     db.UpdateTicketStatus(_ticket, selectedStatus);
                 }
             };
+
 
             Title = $"Ticket: {ticket.AccessCode}";
 
@@ -73,7 +84,7 @@ namespace DTS.MainPages
             {
                 Debug.WriteLine($"PinClick BEFORE: ticket.Id={_ticket.Id}, ticket.AssignedEmployee?.Id={_ticket.AssignedEmployee?.Id}, selectedEmployeeId={selectedEmployee.Id}");
 
-                var db = new DataBase();
+                var db = DataBase.Instance;
 
                 if (selectedEmployee.Id == -1)
                 {
@@ -97,10 +108,29 @@ namespace DTS.MainPages
 
         private void StatusChanged()
         {
-            var db = new DataBase();
+            var db = DataBase.Instance;
             db.UpdateTicketStatus(_ticket, _ticket.Status);
         }
 
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(WritingMessageTextBox.Text))
+            {
+                Message message = new Message
+                {
+                    TicketId = _ticket.Id,
+                    AuthorType = _isEmployee ? AuthorType.Employee : AuthorType.Client,
+                    AuthorId = _isEmployee ? _employeeId : 0,
+                    SentAt = DateTime.Now,
+                    Text = WritingMessageTextBox.Text
+                };
 
+                var db = DataBase.Instance;
+                db.AddMessage(message);
+                _messages.Add(message);
+                WritingMessageTextBox.Clear();
+
+            }
+        }
     }
 }
