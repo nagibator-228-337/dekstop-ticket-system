@@ -29,23 +29,25 @@ namespace DTS
         private GridViewColumnHeader _lastHeaderClicked = null;
         private ListSortDirection _lastDirection = ListSortDirection.Ascending;
         private bool _isEmployee = true;
-        
 
-        public MainEmployeePage(string fullName, bool isAdmin, int employeeId) //employee id
+
+        public MainEmployeePage(string fullName, bool isAdmin, int employeeId)
         {
             InitializeComponent();
-            this.Loaded += (_, __) => { this.Focus(); Keyboard.Focus(this); };
+
+            var topBar = new TopBar();
+            TopGrid.Children.Insert(0, topBar);
 
             var db = DataBase.Instance;
             _allTickets = db.GetAllTickets();
             _myTickets = db.GetTicketsByEmployee(employeeId);
+
             _isAdmin = isAdmin;
             _fullName = fullName;
-            _employeeId = employeeId; 
+            _employeeId = employeeId;
 
             AllTicketsGrid.ItemsSource = _allTickets;
             MyTicketsGrid.ItemsSource = _myTickets;
-
         }
 
         private void Ticket_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -70,6 +72,14 @@ namespace DTS
                 foreach (var t in refreshedMy)
                     _myTickets.Add(t);
                 Debug.WriteLine($"Opened with this ticket Id: {ticket.Id}");
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.MainWindow is MainWindow main)
+            {
+                main.MainFrame.Navigate(null);
             }
         }
 

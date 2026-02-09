@@ -1,49 +1,101 @@
 ﻿<Window x:Class="DTS.FindTicketWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DTS"
-        mc:Ignorable="d"
-        Title="FInd a ticket" Height="150" Width="650">
-    <Grid Margin="20" VerticalAlignment="Center">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+        Title="Find a Ticket"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Width="520"
+        Height="220"
+        Background="Transparent">
 
-        <TextBlock Text="Enter your ticket code to find the ticket"
-                   Grid.ColumnSpan="2"
-                   HorizontalAlignment="Center"
-                   />
+    <Border CornerRadius="12"
+            Background="{StaticResource SurfaceBrush}"
+            BorderBrush="{StaticResource DividerBrush}"
+            BorderThickness="1"
+            SnapsToDevicePixels="True">
 
-        <TextBox Name="CodeTextBox"
-                 Grid.Row="1"
-                />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Button Name="FindTicket"
-                Grid.Row="1"
-                Grid.Column="1"
-                Content="Find a ticket"
-                Click="FindButton_click"
-                />
-        <TextBlock Name="CodeErrorBlock"
-                   Grid.Row="2"
-                   Text="Please enter a valid ticket code"
-                   Foreground="Red"
-                   Visibility="Collapsed"
-                   HorizontalAlignment="Center"/>   
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
+                <Button Content="Back"
+                        Style="{StaticResource GhostButton}"
+                        Margin="8,0"
+                        VerticalAlignment="Center"
+                        Click="BackButton_Click"
+                        Grid.Column="1"/>
 
-        <TextBlock Name="CodePlaceholder"
-                   Text=" Code here"
-                   Grid.Row="1"
-                   Style="{StaticResource PlaceholderStyle}"/>
+                <TextBlock Grid.Column="0"
+                           Text="Find Ticket"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimaryBrush}"/>
+            </Grid>
 
-    </Grid>
+            <Border Grid.Row="1" Height="1" Background="{StaticResource DividerBrush}"/>
+
+            <Grid Grid.Row="2" Margin="24" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Enter your ticket code to find the ticket"
+                           Style="{StaticResource SubtitleText}"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid>
+                        <TextBox x:Name="CodeTextBox"
+                                 Style="{StaticResource BaseTextBox}"/>
+
+                        <TextBlock x:Name="CodePlaceholder"
+                                   Text=" Code here"
+                                   Style="{StaticResource PlaceholderStyle}"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,0,0"/>
+                    </Grid>
+
+                    <Button x:Name="FindTicket"
+                            Grid.Column="1"
+                            Content="Find a Ticket"
+                            Style="{StaticResource SecondaryButton}"
+                            Width="140"
+                            Height="44"
+                            Margin="12,0,0,0"
+                            Click="FindButton_click"/>
+                </Grid>
+
+                <TextBlock x:Name="CodeErrorBlock"
+                           Grid.Row="4"
+                           Text="Please enter a valid ticket code"
+                           Foreground="{StaticResource ErrorBrush}"
+                           Visibility="Collapsed"
+                           Style="{StaticResource CaptionText}"
+                           HorizontalAlignment="Center"/>
+            </Grid>
+        </Grid>
+    </Border>
 </Window>

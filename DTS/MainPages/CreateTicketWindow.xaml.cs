@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Threading.Tasks;
 
 namespace DTS
 {
@@ -19,31 +20,6 @@ namespace DTS
         public CreateTicketWindow()
         {
             InitializeComponent();
-
-            //placeholder logic
-            SubjectTextBox.GotFocus += (s, e) => UpdatePlacholder(SubjectTextBox, SubjectPlaceHolder);
-            SubjectTextBox.LostFocus += (s, e) => UpdatePlacholder(SubjectTextBox, SubjectPlaceHolder);
-            SubjectTextBox.TextChanged += (s, e) => UpdatePlacholder(SubjectTextBox, SubjectPlaceHolder);
-
-            DescriptionTextBox.GotFocus += (s, e) => UpdatePlacholder(DescriptionTextBox, DescriptionTextPlaceholder);
-            DescriptionTextBox.LostFocus += (s, e) => UpdatePlacholder(DescriptionTextBox, DescriptionTextPlaceholder);
-            DescriptionTextBox.TextChanged += (s, e) => UpdatePlacholder(DescriptionTextBox, DescriptionTextPlaceholder);
-
-            ContactTextBox.GotFocus += (s, e) => UpdatePlacholder(ContactTextBox, ContactPlaceholder);
-            ContactTextBox.LostFocus += (s, e) => UpdatePlacholder(ContactTextBox, ContactPlaceholder);
-            ContactTextBox.TextChanged += (s, e) => UpdatePlacholder(ContactTextBox, ContactPlaceholder);
-        }
-
-        private void UpdatePlacholder(TextBox box, TextBlock placeholder)
-        {
-            if (box.IsFocused || !string.IsNullOrWhiteSpace(box.Text))
-            {
-                placeholder.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                placeholder.Visibility = Visibility.Visible;
-            }
         }
 
         private void CreateButton_click(object sender, RoutedEventArgs e)
@@ -84,6 +60,27 @@ namespace DTS
 
             CodeTextBlock.Text = ticket.AccessCode;
         }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void CloseCodeOverlay_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Are you sure? If you lose this code, you won't be able to open it again.",
+                "Warning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                this.Close();
+            }
+        }
+
+
 
         private async void ErrorsHighlight(TextBox textBox, TextBlock textBlock)
         {

@@ -20,36 +20,38 @@ namespace DTS
         {
             InitializeComponent();
         }
-        private void LoginButton_click (object sender, RoutedEventArgs e)
+        private void LoginButton_click(object sender, RoutedEventArgs e)
         {
             var db = DataBase.Instance;
 
-            if (db.ValidateLogin(LoginTextBox.Text.Trim(), PasswordTextBox.Password, out string fullName, out string role, out int id))
+            if (db.ValidateLogin(
+                LoginTextBox.Text.Trim(),
+                PasswordTextBox.Password,
+                out string fullName,
+                out string role,
+                out int id))
             {
                 bool isAdmin = role == "Admin";
                 var page = new MainEmployeePage(fullName, isAdmin, id);
 
-                if (Application.Current.MainWindow is MainWindow main)
+                if (MainWindow.Instance != null)
                 {
-                    main.MainFrame.Navigate(page);
-                }
-                else
-                {
-                    var window = new MainWindow();
-                    window.MainFrame.Navigate(page);
-                    window.Show();
-                    MainWindow.Instance.MainContetnGrid.IsEnabled = false;
+                    MainWindow.Instance.MainFrame.Navigate(page);
                 }
 
                 this.Close();
             }
-
             else
             {
-                MessageBox.Show("Wron login or pass");
+                MessageBox.Show("Wrong login or password");
             }
         }
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
     }
 
-    
+
 }

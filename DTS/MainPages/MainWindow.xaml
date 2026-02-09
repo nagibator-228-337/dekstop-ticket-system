@@ -1,59 +1,64 @@
 ﻿<Window x:Class="DTS.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DTS"
-        mc:Ignorable="d"
-        Title="Ticket System" Height="600" Width="850">
-	<Grid Name="MainContetnGrid">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="1" Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        Title="Ticket System"
+        WindowState="Maximized"
+        Background="{StaticResource BackgroundBrush}">
 
-                <!-- Main buttons -->
-                <Button Grid.Row="0"
-                    Name="Create"
-                    Content="Create Ticket"
-                    Click="CreateButton_click"
-                    Margin="10"/>
-                
-                <Button Grid.Row="1"
-                    Name="Search"
-                    Content="Search Ticket" 
-                    Click="SearchButton_click"
-                    Margin="10"/>
-            </Grid>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <!-- Login part-->
-            <Grid Grid.Column="2">
-                <Button Name="Login" 
-                    Content="Login" 
+        <Grid x:Name="TopGrid" Grid.Row="0">
+            <Button x:Name="Login"
+                    Content="Login"
+                    Style="{StaticResource GhostButton}"
                     Click="LoginButton_click"
-                    HorizontalAlignment="Right" 
-                    VerticalAlignment="Top"
-                    Margin="10"
-                    />
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Margin="16,0"/>
+        </Grid>
+
+        
+        <Grid x:Name="MainContentGrid" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="1300">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+    
+            <!-- Buttons row -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Create Ticket Button -->
+                <Button x:Name="Create"
+                        Grid.Column="0"
+                        Content="Create Ticket"
+                        Style="{StaticResource LargePrimaryButton}"
+                        Click="CreateButton_click"/>
+
+                <!-- Search Ticket Button -->
+                <Button x:Name="Search"
+                        Grid.Column="2"
+                        Content="Search Ticket"
+                        Style="{StaticResource LargeSecondaryButton}"
+                        Click="SearchButton_click"/>
             </Grid>
         </Grid>
-        <Grid>
-            <Frame x:Name="MainFrame" 
-                   NavigationUIVisibility="Hidden"
-                   />
+        <Border Grid.Row="1" Background="#80000000" Visibility="Collapsed" Name="Drakening"/>
+
+        <Grid Visibility="Visible" Grid.RowSpan="2">
+            <Frame x:Name="MainFrame"
+                   NavigationUIVisibility="Hidden"/>
         </Grid>
+
     </Grid>
-    
 </Window>
