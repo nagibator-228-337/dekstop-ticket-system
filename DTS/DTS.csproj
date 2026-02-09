@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MahApps.Metro" Version="2.4.11" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.2" />
   </ItemGroup>
 

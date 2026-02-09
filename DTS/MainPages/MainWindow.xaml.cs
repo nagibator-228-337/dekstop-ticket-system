@@ -22,23 +22,31 @@ namespace DTS
             InitializeComponent();
             Instance = this;
 
-
+            var topBar = new TopBar();
+            TopGrid.Children.Insert(0, topBar);
         }
 
 
         private void LoginButton_click( object sender, RoutedEventArgs e)
         {
             var window = new LoginWindow();
+            Drakening.Visibility = Visibility.Visible;
+            // ensure darkening hides when login window is closed
+            window.Closed += (s, args) => Drakening.Visibility = Visibility.Collapsed;
             window.ShowDialog();
+            // in case Closed handler didn't run for some reason, hide after dialog returns
+            Drakening.Visibility = Visibility.Collapsed;
         }
 
         private void CreateButton_click(object sender, RoutedEventArgs e)
-        {
+        {       
             if (createTicketWindow == null)
             {
                 createTicketWindow = new CreateTicketWindow();
-                createTicketWindow.Closed += (s, args) => createTicketWindow = null;
-                createTicketWindow.Show();
+                createTicketWindow.Closed += (s, args) => { createTicketWindow = null; Drakening.Visibility = Visibility.Collapsed; };
+                Drakening.Visibility = Visibility.Visible;
+                createTicketWindow.ShowDialog();
+                Drakening.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -51,8 +59,10 @@ namespace DTS
             if (findTicketWindow == null)
             {
                 findTicketWindow = new FindTicketWindow();
-                findTicketWindow.Closed += (s, args) => findTicketWindow = null;
-                findTicketWindow.Show();
+                findTicketWindow.Closed += (s, args) => { findTicketWindow = null; Drakening.Visibility = Visibility.Collapsed; };
+                Drakening.Visibility = Visibility.Visible;
+                findTicketWindow.ShowDialog();
+                Drakening.Visibility = Visibility.Collapsed;
             }
             else
             {

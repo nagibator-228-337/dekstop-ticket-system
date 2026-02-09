@@ -16,7 +16,6 @@ namespace DTS
 {
     public partial class FindTicketWindow : Window
     {
-
         public FindTicketWindow()
         {
             InitializeComponent();
@@ -80,6 +79,13 @@ namespace DTS
 
             textBlock.Visibility = Visibility.Collapsed;
         }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+            
+        }
+
 
 
     }
