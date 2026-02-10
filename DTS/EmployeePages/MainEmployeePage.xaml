@@ -13,52 +13,67 @@
         <Grid Name="TopGrid" Background="Transparent">
             <Button Content="Back"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
+                    VerticalAlignment="Center"
                     Margin="16,12,0,0"
                     Width="80"
-                    Click="BackButton_Click"/>
+                    Click="BackButton_Click"
+                    Style="{StaticResource  GhostButton}"/>
         </Grid>
 
         <!-- Main content -->
         <Grid Margin="16,0,16,16" Grid.Row="1">
             <TabControl>
-                <TabItem Header="All tickets">
-                    <DataGrid Name="AllTicketsGrid"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              CanUserResizeRows="False"
-                              CanUserResizeColumns="True"
-                              SelectionUnit="FullRow"
-                              MouseDoubleClick="Ticket_MouseDoubleClick"
-                              RowHeight="40"
-                              RowStyle="{StaticResource {x:Type DataGridRow}}">
+                <TabItem Header="All tickets" Style="{StaticResource TabItem}">
+                    <Border Background="#EDEDED"
+                            Padding="6"
+                            BorderBrush="#CFCFCF"
+                            BorderThickness="1">
 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
-                            <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
-                            <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
-                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                            <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                        <DataGrid Name="AllTicketsGrid"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserResizeRows="False"
+                                  CanUserResizeColumns="True"
+                                  SelectionUnit="FullRow"
+                                  MouseDoubleClick="Ticket_MouseDoubleClick"
+                                  RowHeight="40"
+                                  RowStyle="{StaticResource {x:Type DataGridRow}}">
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                                <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
+                                <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                                <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
                 </TabItem>
 
-                <TabItem Header="My tickets">
-                    <DataGrid Name="MyTicketsGrid"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              CanUserResizeRows="False"
-                              CanUserResizeColumns="True"
-                              MouseDoubleClick="Ticket_MouseDoubleClick"
-                              RowHeight="40">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
-                            <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
-                            <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
-                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                            <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                <TabItem Header="My Tickets" Style="{StaticResource TabItem}">
+                    <Border Background="#EDEDED"
+                            Padding="6"
+                            BorderBrush="#CFCFCF"
+                            BorderThickness="1">
+
+                        <DataGrid Name="MyTicketsGrid"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserResizeRows="False"
+                                  CanUserResizeColumns="True"
+                                  SelectionUnit="FullRow"
+                                  MouseDoubleClick="Ticket_MouseDoubleClick"
+                                  RowHeight="40"
+                                  RowStyle="{StaticResource {x:Type DataGridRow}}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                                <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
+                                <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="*"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                                <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedEmployee.FullName}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
                 </TabItem>
             </TabControl>
         </Grid>

@@ -44,7 +44,7 @@
             <!-- MAIN -->
             <Grid Grid.Row="1" Margin="12">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1.5*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
@@ -193,7 +193,11 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBox x:Name="WritingMessageTextBox"
-                                     Height="50"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     MinHeight="50"
+                                     MaxHeight="120"
                                      Style="{StaticResource BaseTextBox}"/>
 
                             <Button Grid.Column="1"

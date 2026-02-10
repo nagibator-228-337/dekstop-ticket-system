@@ -63,7 +63,7 @@
 
                     <StackPanel Grid.Row="0">
                         <TextBlock Text="Subject*" Style="{StaticResource SubtitleText}" Margin="0,0,0,4"/>
-                        <TextBox Name="SubjectTextBox" Style="{StaticResource BaseTextBox}"/>
+                        <TextBox Name="SubjectTextBox" Style="{StaticResource BaseTextBox}" MaxLength="30"/>
                         <TextBlock Name="SubjectUnfilledBlock"
                                    Text="Please fill in this field"
                                    Foreground="Red"
@@ -73,17 +73,27 @@
 
                     <StackPanel Grid.Row="2">
                         <TextBlock Text="Your contact email" Style="{StaticResource SubtitleText}" Margin="0,0,0,4"/>
-                        <TextBox Name="ContactTextBox" Style="{StaticResource BaseTextBox}"/>
+                        <TextBox Name="ContactTextBox" Style="{StaticResource BaseTextBox}" MaxLength="60"/>
+                        <TextBlock Name="WrongContactFormat"
+                                   Text="This Email Incorrect"
+                                   Foreground="Red"
+                                   Visibility="Collapsed"
+                                   Style="{StaticResource CaptionText}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="4">
-                        <TextBlock Text="Description*" Style="{StaticResource SubtitleText}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Description* (0/800)"
+                                   Style="{StaticResource SubtitleText}"
+                                   Margin="0,0,0,4"
+                                   Name="DescriptionCounterTextBlock"/>
                         <TextBox Name="DescriptionTextBox"
                                  Style="{StaticResource BaseTextBox}"
                                  AcceptsReturn="True"
                                  VerticalScrollBarVisibility="Auto"
                                  TextWrapping="Wrap"
-                                 Height="200"/>
+                                 Height="200"
+                                 MaxLength="800"
+                                 TextChanged="DescriptionTextBox_TextChanged"/>
                         <TextBlock Name="DescriptionUnfilledBlock"
                                    Text="Please fill in this field"
                                    Foreground="Red"

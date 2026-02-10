@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading.Tasks;
+using System.Net.Mail;
+
 
 namespace DTS
 {
@@ -35,7 +37,16 @@ namespace DTS
                 ErrorsHighlight(DescriptionTextBox, DescriptionUnfilledBlock);
                 return;
             }
-            
+
+            if (!string.IsNullOrWhiteSpace(ContactTextBox.Text))
+            {
+                if (!IsValidEmail(ContactTextBox.Text))
+                {
+                    ErrorsHighlight(ContactTextBox, WrongContactFormat);
+                    return;
+                }
+            }
+
 
             Ticket ticket = new Ticket
             {
@@ -61,6 +72,19 @@ namespace DTS
             CodeTextBlock.Text = ticket.AccessCode;
         }
 
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -80,7 +104,11 @@ namespace DTS
             }
         }
 
-
+        private void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            int currentLength = DescriptionTextBox.Text.Length;
+            DescriptionCounterTextBlock.Text = $"Description* ({currentLength}/800)";
+        }
 
         private async void ErrorsHighlight(TextBox textBox, TextBlock textBlock)
         {
